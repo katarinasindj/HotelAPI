@@ -24,3 +24,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::resource('items', ItemController::class);
 Route::resource('locations', LocationController::class);
+Route::post('/items/{id}/book', [ItemController::class, 'book']);
+

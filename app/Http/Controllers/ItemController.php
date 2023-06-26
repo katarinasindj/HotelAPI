@@ -114,4 +114,23 @@ private function validateData(Request $request, $isUpdate = false) {
     return array_merge($request->all(), ['reputationBadge' => $reputationBadge]);
 }
 
+
+public function book($id)
+{
+    $item = Item::find($id);
+
+    if (!$item) {
+        return response()->json(['message' => 'Item not found'], 404);
+    }
+
+    if ($item->availability <= 0) {
+        return response()->json(['message' => 'No availability for this item'], 400);
+    }
+
+    $item->availability -= 1;
+    $item->save();
+
+    return response()->json(['message' => 'Booking successful', 'item' => $item]);
+}
+
 }
