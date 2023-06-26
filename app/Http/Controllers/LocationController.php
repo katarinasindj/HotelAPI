@@ -19,7 +19,7 @@ class LocationController extends Controller
             'city' => 'required|string',
             'state' => 'required|string',
             'country' => 'required|string',
-            'zip_code' => 'required|integer|digit:5',
+            'zip_code' => 'required|integer|digits:5',
             'address' =>'required|string'
         ]);
 
