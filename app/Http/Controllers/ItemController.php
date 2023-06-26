@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Item;
+
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Models\Item;
+
+
 
 class ItemController extends Controller
 {
@@ -19,40 +23,15 @@ class ItemController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => [
-                'required',
-                'min:11',
-                function ($attribute, $value, $fail) {
-                    if (preg_match('/\b(?:Free|Offer|Book|Website)\b/i', $value)) {
-                        $fail($attribute.' Ne smije sadržavati riječi Free, Offer, Book ili Website.');
-                    }
-                },
-            ],
-            'rating' => 'required',
-            'category' => 'required',
-            'location_id' => 'required',
-            'image' => 'required',
-            'reputation' => 'required',
-            'reputationBadge' => 'required',
-            'price' => 'required',
-            'availability' => 'required',
 
-
-        ]);
+        $validatedData = $this->validateData($request, false);
 
         $item = new Item;
-        $item->name = $request->name;
-        $item->rating = $request->rating;
-        $item->category = $request->category;
-        $item->location_id = $request->location_id;
-        $item->image = $request->image;
-        $item->reputation = $request->reputation;
-        $item->reputationBadge = $request->reputationBadge;
-        $item->price = $request->price;
-        $item->availability = $request->availability;
 
+        $item->fill($validatedData);
         $item->save();
+
+
 
         return response()->json(['message' => 'Item created successfully', 'item' => $item], 201);
     }
@@ -76,30 +55,9 @@ class ItemController extends Controller
             return response()->json(['message' => 'Item not found'], 404);
         }
 
-        // Validacija podataka iz zahtijeva
-        $request->validate([
-            'name' => 'required',
-            'rating' => 'required',
-            'category' => 'required',
-            'location_id' => 'required',
-            'image' => 'required',
-            'reputation' => 'required',
-            'reputationBadge' => 'required',
-            'price' => 'required',
-            'availability' => 'required'
-        ]);
+        $validatedData = $this->validateData($request, true);
 
-
-        $item->name = $request->name;
-        $item->rating = $request->rating;
-        $item->category = $request->category;
-        $item->location_id = $request->location_id;
-        $item->image = $request->image;
-        $item->reputation = $request->reputation;
-        $item->reputationBadge = $request->reputationBadge;
-        $item->price = $request->price;
-        $item->availability = $request->availability;
-
+        $item->fill($validatedData);
         $item->save();
 
 
@@ -123,9 +81,37 @@ class ItemController extends Controller
     return response()->json(['message' => 'Item deleted successfully']);
 }
 
+private function validateData(Request $request, $isUpdate = false) {
+    $requiredRule = $isUpdate ? 'sometimes' : 'required';
 
+    $request->validate([
+        'name' => [
+            $requiredRule,
+            'min:11',
+            function ($attribute, $value, $fail) {
+                if (preg_match('/\b(?:Free|Offer|Book|Website)\b/i', $value)) {
+                    $fail($attribute.' Ne smije sadržavati riječi Free, Offer, Book ili Website.');
+                }
+            },
+        ],
+        'rating' => [$requiredRule, 'integer', 'min:0', 'max:5'],
+        'category' => [$requiredRule, 'string', Rule::in(['hotel', 'alternative', 'hostel', 'guest-house'])],
+        'location_id' => [$requiredRule, 'exists:locations,id'],
+        'image' => [$requiredRule, 'url'],
+        'reputation' => [$requiredRule, 'integer', 'min:0', 'max:1000'],
+        'price' => [$requiredRule, 'integer'],
+        'availability' => [$requiredRule, 'integer'],
+    ]);
+
+    $reputation = $request->reputation;
+    $reputationBadge = 'red';
+    if ($reputation > 500 && $reputation <= 799) {
+        $reputationBadge = 'yellow';
+    } elseif ($reputation > 799) {
+        $reputationBadge = 'green';
+    }
+
+    return array_merge($request->all(), ['reputationBadge' => $reputationBadge]);
 }
 
-
-
-
+}

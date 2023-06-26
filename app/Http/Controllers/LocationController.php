@@ -15,6 +15,14 @@ class LocationController extends Controller
 
     public function store (Request $request)
     {
+        $request->validate([
+            'city' => 'required|string',
+            'state' => 'required|string',
+            'country' => 'required|string',
+            'zip_code' => 'required|integer|digit:5',
+            'address' =>'required|string'
+        ]);
+
         $location = new Location;
         $location->city = $request->input('city');
         $location->state = $request->input('state');
@@ -39,6 +47,16 @@ class LocationController extends Controller
     public function update (Request $request, $id)
 
     {
+
+        $request->validate([
+            'city' => 'string',
+            'state' => 'string',
+            'country' => 'string',
+            'zip_code' => 'integer|digits:5',
+            'address' => 'string',
+        ]);
+
+
         $location = Location::find($id);
         if (!$location) {
             return response()->json(['message' => 'Location not found'], 404);
