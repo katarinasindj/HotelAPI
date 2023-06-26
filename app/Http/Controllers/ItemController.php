@@ -20,7 +20,15 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => [
+                'required',
+                'min:11',
+                function ($attribute, $value, $fail) {
+                    if (preg_match('/\b(?:Free|Offer|Book|Website)\b/i', $value)) {
+                        $fail($attribute.' Ne smije sadržavati riječi Free, Offer, Book ili Website.');
+                    }
+                },
+            ],
             'rating' => 'required',
             'category' => 'required',
             'location_id' => 'required',
