@@ -38,10 +38,11 @@ class LocationController extends Controller
     public function show($id)
     {
         $location = Location::find($id);
-        if (!$location) {
-            return response()->json(['message' => 'Location not found'], 404);
+        if ($location) {
+            return response()->json($location);
+        } else {
+            return response()->json(['message' => "Location not found "], 404);
         }
-        return response()->json($location);
     }
 
     public function update (Request $request, $id)

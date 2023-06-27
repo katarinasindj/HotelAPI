@@ -12,10 +12,10 @@ use App\Models\Item;
 class ItemController extends Controller
 {
 
+
     public function index()
     {
         $items = Item::all();
-
 
         return response()->json($items);
     }
@@ -23,16 +23,12 @@ class ItemController extends Controller
     public function store(Request $request)
     {
 
-        $validatedData = $this->validateData($request, false);
-
+        $validateDate = $this->validateData($request,false);
         $item = new Item;
-
-        $item->fill($validatedData);
+        $item->fill($validateDate);
         $item->save();
 
-
-
-        return response()->json(['message' => 'Item created successfully', 'item' => $item], 201);
+        return response()->json(['message' => 'Item created sucessfully', 'item' => $item], 201);
     }
 
     public function show($id)
@@ -40,11 +36,12 @@ class ItemController extends Controller
         $item = Item::find($id);
 
         if($item) {
-           return response()->json($item);
+            return response()->json($item);
         } else {
             return response()->json(['message' => 'Item not found'], 404);
         }
     }
+
     public function update(Request $request, $id)
     {
 
@@ -64,7 +61,7 @@ class ItemController extends Controller
     }
 
     public function destroy($id)
-{
+    {
 
     $item = Item::find($id);
 
@@ -77,7 +74,10 @@ class ItemController extends Controller
 
 
     return response()->json(['message' => 'Item deleted successfully']);
-}
+
+    }
+
+
 
 private function validateData(Request $request, $isUpdate = false) {
     $requiredRule = $isUpdate ? 'sometimes' : 'required';
