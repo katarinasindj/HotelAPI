@@ -9,10 +9,8 @@ class Item extends Model
 {
     use HasFactory;
 
-    // Definisanje imena tabele ukoliko nije automatski prepoznato
     protected $table = 'items';
 
-    // Definisanje dozvoljenih kolona za masovno dodjeljivanje vrijednosti
     protected $fillable = [
         'name',
         'rating',
@@ -25,7 +23,6 @@ class Item extends Model
         'availability'
     ];
 
-    // Definisanje relacije sa lokacijom
     public function location()
     {
         return $this->belongsTo(Location::class, 'location_id');

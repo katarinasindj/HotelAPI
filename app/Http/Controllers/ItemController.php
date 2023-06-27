@@ -14,10 +14,9 @@ class ItemController extends Controller
 
     public function index()
     {
-        // Uzima sve item-e iz tabele items
         $items = Item::all();
 
-        // Vraca items kao JSON response
+
         return response()->json($items);
     }
 
@@ -66,10 +65,9 @@ class ItemController extends Controller
 
     public function destroy($id)
 {
-    // Pokušavamo da pronađemo stavku sa zadatim ID-em
+
     $item = Item::find($id);
 
-    // Ako stavka nije pronađena, vraćamo odgovor sa statusom 404
     if (!$item) {
         return response()->json(['message' => 'Item not found'], 404);
     }
@@ -90,13 +88,16 @@ private function validateData(Request $request, $isUpdate = false) {
             'min:11',
             function ($attribute, $value, $fail) {
                 if (preg_match('/\b(?:Free|Offer|Book|Website)\b/i', $value)) {
-                    $fail($attribute.' Ne smije sadržavati riječi Free, Offer, Book ili Website.');
+                    $fail($attribute.' Ne smije da sadrzi riječi Free, Offer, Book ili Website.');
                 }
             },
         ],
         'rating' => [$requiredRule, 'integer', 'min:0', 'max:5'],
         'category' => [$requiredRule, 'string', Rule::in(['hotel', 'alternative', 'hostel', 'guest-house'])],
-        'location_id' => [$requiredRule, 'exists:locations,id'],
+        'location_id' => [
+            $requiredRule,
+            Rule::exists('locations', 'id'),
+        ],
         'image' => [$requiredRule, 'url'],
         'reputation' => [$requiredRule, 'integer', 'min:0', 'max:1000'],
         'price' => [$requiredRule, 'integer'],

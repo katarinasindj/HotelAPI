@@ -14,9 +14,9 @@ class LocationControllerTest extends TestCase
     public function test_can_create_location(): void
     {
         $data = [
-            'city' => 'Belgrade',
-            'state' => 'Serbia',
-            'country' => 'Serbia',
+            'city' => 'Beograd',
+            'state' => 'Srbija',
+            'country' => 'Srbija',
             'zip_code' => 11000,
             'address' => 'Knez Mihailova'
         ];
@@ -39,7 +39,7 @@ class LocationControllerTest extends TestCase
 
         $response = $this->postJson('/api/locations', $data);
 
-        $response->assertStatus(422); // HTTP 422 Unprocessable Entity
+        $response->assertStatus(422);
     }
 
     public function test_can_get_location(): void
@@ -106,7 +106,7 @@ class LocationControllerTest extends TestCase
         $location = Location::factory()->create();
 
         $data = [
-            'city' => 'New City',
+            'city' => 'New York',
             'state' => 'New State',
             'country' => 'New Country',
             'zip_code' => 12345,
