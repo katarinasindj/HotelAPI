@@ -15,20 +15,10 @@ class LocationController extends Controller
 
     public function store (Request $request)
     {
-        $request->validate([
-            'city' => 'required|string',
-            'state' => 'required|string',
-            'country' => 'required|string',
-            'zip_code' => 'required|integer|digits:5',
-            'address' =>'required|string'
-        ]);
+        $validateData = $this->validateData($request, false);
 
         $location = new Location;
-        $location->city = $request->input('city');
-        $location->state = $request->input('state');
-        $location->country = $request->input('country');
-        $location->zip_code = $request->input('zip_code');
-        $location->address = $request->input('address');
+        $location->fill($validateData);
         $location->save();
 
         return response()->json($location,201);
@@ -48,14 +38,7 @@ class LocationController extends Controller
     public function update (Request $request, $id)
 
     {
-
-        $request->validate([
-            'city' => 'string',
-            'state' => 'string',
-            'country' => 'string',
-            'zip_code' => 'integer|digits:5',
-            'address' => 'string',
-        ]);
+        $validateData = $this->validateData($request, true);
 
 
         $location = Location::find($id);
@@ -63,11 +46,7 @@ class LocationController extends Controller
             return response()->json(['message' => 'Location not found'], 404);
         }
 
-        $location->city = $request->input('city', $location->city);
-        $location->state = $request->input('state', $location->state);
-        $location->country = $request->input('country', $location->country);
-        $location->zip_code = $request->input('zip_code', $location->zip_code);
-        $location->address = $request->input('address', $location->address);
+        $location->fill($validateData);
         $location->save();
 
         return response()->json($location);
@@ -82,6 +61,22 @@ class LocationController extends Controller
         $location->delete();
 
         return response()->json(['message' => 'Location deleted successfully']);
+    }
+
+    private function validateData(Request $request, $isUpdate = false)
+    {
+        $requiredRule = $isUpdate ? 'sometimes' : 'required';
+
+        $request->validate([
+            'city' => [$requiredRule, 'string'],
+            'state' => [$requiredRule, 'string'],
+            'country' => [$requiredRule, 'string'],
+            'zip_code' => [$requiredRule, 'integer', 'digits:5'],
+            'state' => [$requiredRule, 'string']
+
+        ]);
+
+        return $request->all();
     }
 
 }
