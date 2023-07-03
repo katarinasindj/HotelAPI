@@ -79,14 +79,14 @@ class ItemController extends Controller
 
 
 
-private function validateData(Request $request, $isUpdate = false) {
-    $requiredRule = $isUpdate ? 'sometimes' : 'required';
+    private function validateData(Request $request, $isUpdate = false) {
+        $requiredRule = $isUpdate ? 'sometimes' : 'required';
 
-    $request->validate([
+        $request->validate([
         'name' => [
             $requiredRule,
             'min:11',
-            function ($attribute, $value, $fail) {
+             function ($attribute, $value, $fail) {
                 if (preg_match('/\b(?:Free|Offer|Book|Website)\b/i', $value)) {
                     $fail($attribute.' Ne smije da sadrzi riječi Free, Offer, Book ili Website.');
                 }
@@ -116,8 +116,8 @@ private function validateData(Request $request, $isUpdate = false) {
 }
 
 
-public function book($id)
-{
+    public function book($id)
+    {
     $item = Item::find($id);
 
     if (!$item) {
