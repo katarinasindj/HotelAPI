@@ -1,0 +1,269 @@
+openapi: 3.0.0
+info:
+  title: Hotel API
+  version: 1.0.0
+
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Hotel Belgrade"
+        rating:
+          type: integer
+          example: 5
+        category:
+          type: string
+          example: hotel
+        image:
+          type: url
+          example: https://example.com/image.jpg
+        reputation:
+          type: integer
+          example: 800
+        reputationBadge:
+          type:
+          example: green
+        price:
+          type: integer
+          example: 150
+        availability:
+          type: integer
+          example: 9
+
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        city:
+          type: string
+          example: "Belgrade"
+        state:
+          type: string
+          example: "BG"
+        country:
+          type: string
+          example: Serbia
+        zip_code:
+          type: integer
+          example: 81400
+        address:
+          type: string
+          example: Bulevar, Belgrade
+
+paths:
+  /items:
+    get:
+      summary: Get all items for a given hotelier
+      responses:
+        200:
+          description: A list of items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+    post:
+      summary: Create a new item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Item"
+      responses:
+        201:
+          description: Item created successfully
+        400:
+          description: Invalid input data
+
+  /items/{itemId}:
+    get:
+      summary: Get a single item by ID
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Single item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        404:
+          description: Item not found
+    put:
+      summary: Update an item by ID
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Item"
+      responses:
+        200:
+          description: Item updated successfully
+        404:
+          description: Item not found
+    delete:
+      summary: Delete an item by ID
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Item deleted successfully
+        404:
+          description: Item not found
+
+  /locations:
+    get:
+      summary: Get all locations
+      responses:
+        200:
+          description: A list of locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Location"
+    post:
+      summary: Create a new location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Location"
+      responses:
+        201:
+          description: Location created successfully
+        400:
+          description: Invalid input data
+
+  /locations/{locationId}:
+    get:
+      summary: Get a single location by ID
+      parameters:
+        - name: locationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Single location
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Location"
+        404:
+          description: Location not found
+    put:
+      summary: Update a location by ID
+      parameters:
+        - name: locationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Location"
+      responses:
+        200:
+          description: Location updated successfully
+        404:
+          description: Location not found
+    delete:
+      summary: Delete a location by ID
+      parameters:
+        - name: locationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Location deleted successfully
+        404:
+          description: Location not found
+
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Hotel Paradise"
+        rating:
+          type: integer
+          example: 5
+        category:
+          type: string
+          example: "hotel"
+        location:
+          $ref: "#/components/schemas/Location"
+        image:
+          type: string
+          format: url
+          example: "https://example.com/image.jpg"
+        reputation:
+          type: integer
+          example: 500
+        price:
+          type: integer
+          example: 100
+        availability:
+          type: integer
+          example: 10
+
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        city:
+          type: string
+          example: "New York"
+        state:
+          type: string
+          example: "NY"
+        country:
+          type: string
+          example: "USA"
+        zip_code:
+          type: integer
+          example: 10001
+        address:
+          type: string
+          example: "123 Main St"
