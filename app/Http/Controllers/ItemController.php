@@ -69,55 +69,49 @@ class ItemController extends Controller
         return response()->json(['message' => 'Item not found'], 404);
     }
 
-
-    $item->delete();
+        $item->delete();
 
 
     return response()->json(['message' => 'Item deleted successfully']);
 
     }
 
-
-
-    private function validateData(Request $request, $isUpdate = false) {
+    private function validateData(Request $request, $isUpdate = false)
+    {
         $requiredRule = $isUpdate ? 'sometimes' : 'required';
 
         $request->validate([
-        'name' => [
-            $requiredRule,
-            'min:11',
-             function ($attribute, $value, $fail) {
-                if (preg_match('/\b(?:Free|Offer|Book|Website)\b/i', $value)) {
-                    $fail($attribute.' Ne smije da sadrzi riječi Free, Offer, Book ili Website.');
+            'name' => [$requiredRule, 'min:11', function ($attribute, $value, $fail) {
+                if(preg_match('/\b(?:Free|Offer|Book|Website)\b/i', $value)) {
+                    $fail($attribute. 'Can not contain Free, Offer, Book or Website');
                 }
-            },
-        ],
-        'rating' => [$requiredRule, 'integer', 'min:0', 'max:5'],
-        'category' => [$requiredRule, 'string', Rule::in(['hotel', 'alternative', 'hostel', 'guest-house'])],
-        'location_id' => [
-            $requiredRule,
-            Rule::exists('locations', 'id'),
-        ],
-        'image' => [$requiredRule, 'url'],
-        'reputation' => [$requiredRule, 'integer', 'min:0', 'max:1000'],
-        'price' => [$requiredRule, 'integer'],
-        'availability' => [$requiredRule, 'integer'],
-    ]);
+            }],
+            'rating' => [$requiredRule, 'integer', 'min:0', 'max:5'],
+            'category' => [$requiredRule, 'string', Rule::in(['hotel', 'alternative', 'hostel', 'guest-house'])],
+            'location_id' => [$requiredRule, Rule::exists('locations', 'id')],
+            'image' => [$requiredRule, 'url'],
+            'reputation' => [$requiredRule, 'integer', 'min:0', 'max:1000'],
+            'price' => [$requiredRule, 'integer'],
+            'availability' => [$requiredRule, 'integer'],
+        ]);
 
-    $reputation = $request->reputation;
-    $reputationBadge = 'red';
-    if ($reputation > 500 && $reputation <= 799) {
-        $reputationBadge = 'yellow';
-    } elseif ($reputation > 799) {
-        $reputationBadge = 'green';
-    }
+        $reputation = $request->reputation;
+        $reputationBadge = 'red';
+
+        if ($reputation > 500 && $reputation <= 799) {
+            $reputationBadge = 'yellow';
+        } elseif ($reputation > 799) {
+            $reputationBadge = 'green';
+        }
 
     return array_merge($request->all(), ['reputationBadge' => $reputationBadge]);
-}
+
+    }
 
 
     public function book($id)
     {
+
     $item = Item::find($id);
 
     if (!$item) {
